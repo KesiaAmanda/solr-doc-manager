@@ -289,11 +289,17 @@ class DocManager(DocManagerBase):
 
         cleaned = (self._clean_doc(d, namespace, timestamp) for d in docs)
         if self.chunk_size > 0:
-            batch = list(next(cleaned) for i in range(self.chunk_size))
-            while batch:
+            while True:
+                batch = []
+                try:
+                    for _ in range(self.chunk_size):
+                        batch.append(next(cleaned))
+                except StopIteration:
+                    if batch:
+                        self.solr.add(batch, **add_kwargs)
+                    break
+                
                 self.solr.add(batch, **add_kwargs)
-                batch = list(next(cleaned)
-                             for i in range(self.chunk_size))
         else:
             self.solr.add(cleaned, **add_kwargs)
 
