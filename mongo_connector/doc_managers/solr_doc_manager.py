@@ -104,10 +104,10 @@ class DocManager(DocManagerBase):
         for wc_pattern in self._parse_fields(result, 'dynamicFields'):
             if wc_pattern[0] == "*":
                 self._dynamic_field_regexes.append(
-                    re.compile(".*%s\Z" % wc_pattern[1:]))
+                    re.compile(r".*%s\Z" % wc_pattern[1:]))
             elif wc_pattern[-1] == "*":
                 self._dynamic_field_regexes.append(
-                    re.compile("\A%s.*" % wc_pattern[:-1]))
+                    re.compile(r"\A%s.*" % wc_pattern[:-1]))
 
     def _clean_doc(self, doc, namespace, timestamp):
         """Reformats the given document before insertion into Solr.
